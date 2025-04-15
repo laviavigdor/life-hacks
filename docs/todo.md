@@ -67,12 +67,12 @@ CREATE TABLE diary (
 - [x] Create basic insight extraction prompt
 - [x] Add error handling for API calls
 
-## Phase 4: Insight Extraction
-- [ ] Create prompt for extracting key insights
-- [ ] Add validation for insight format
-- [ ] Add support for relative time parsing
-- [ ] Add derived metric calculation
-- [ ] Save insights to DB as part of the diary entry
+## Phase 4: Insight Extraction ✅
+- [x] Create prompt for extracting key insights
+- [x] Add validation for insight format
+- [x] Add support for relative time parsing
+- [x] Add derived metric calculation
+- [x] Save insights to DB as part of the diary entry
 
 ## Phase 5: Dynamic Taxonomy
 - [ ] Implement on-the-fly taxonomy computation

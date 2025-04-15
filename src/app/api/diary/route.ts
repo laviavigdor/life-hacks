@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
-import { extractInsights } from '@/lib/openai/prompts';
+import { extractInsights, InsightSchema } from '@/lib/openai/prompts';
 import { OpenAIError } from '@/lib/openai/client';
 
 const prisma = new PrismaClient();
@@ -71,9 +71,24 @@ export async function POST(request: Request) {
         let insights;
         try {
             insights = await extractInsights(result.data.entry);
+
+            // Additional validation of insights
+            const validationResult = InsightSchema.safeParse(insights);
+            if (!validationResult.success) {
+                console.error('Invalid insight format:', validationResult.error);
+                throw new Error('Failed to validate insights');
+            }
+
+            insights = validationResult.data;
         } catch (error) {
             console.error('Failed to extract insights:', error);
-            insights = { error: error instanceof OpenAIError ? error.message : 'Failed to analyze entry' };
+            insights = {
+                error: error instanceof OpenAIError ? error.message : 'Failed to analyze entry',
+                activity: null,
+                metrics: [],
+                timestamp: new Date().toISOString(),
+                confidence: 'low'
+            };
         }
 
         // Save to database with insights
