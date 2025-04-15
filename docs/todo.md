@@ -62,13 +62,10 @@ CREATE TABLE diary (
   - Database errors
   - Rate limiting
 
-## Phase 3: LLM Integration
-- [ ] Add OpenAI integration
-- [ ] Create basic insight extraction prompt
-- [ ] Add error handling for API calls
-- [ ] Create prompt testing suite
-- [ ] Add prompt versioning system
-- [ ] Create prompt iteration workflow
+## Phase 3: LLM Integration ✅
+- [x] Add OpenAI integration
+- [x] Create basic insight extraction prompt
+- [x] Add error handling for API calls
 
 ## Phase 4: Insight Extraction
 - [ ] Create prompt for extracting key insights
