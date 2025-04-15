@@ -80,24 +80,24 @@ CREATE TABLE diary (
 - [x] Create context formatter for LLM prompts
 - [x] Add basic caching for taxonomy computation
 
-## Phase 6: Bottom Input Panel
-- [ ] Create fixed bottom sheet with shadow and rounded top corners
-- [ ] Add auto-expanding textarea with "How can I help?" placeholder
-- [ ] Create simple AI status area showing "Thinking..." and completion checkmark
-- [ ] Add submit button that activates when input present
+## Phase 6: Bottom Input Panel ✅
+- [x] Create fixed bottom sheet with shadow and rounded top corners
+- [x] Add auto-expanding textarea with "How can I help?" placeholder
+- [x] Create simple AI status area showing "Thinking..." and completion checkmark
+- [x] Add submit button that activates when input present
 
-## Phase 7: Basic Metrics Display
-- [ ] Implement simple numeric display widget
-- [ ] Add basic list view for entries
-- [ ] Create simple line chart component
-- [ ] Handle empty states gracefully
+## Phase 7: Basic Metrics Display ✅
+- [x] Implement simple numeric display widget
+- [x] Add basic list view for entries
+- [x] Create simple line chart component
+- [x] Handle empty states gracefully
 
-## Phase 8: Query Processing
-- [ ] Implement basic date range parsing
-- [ ] Add simple metric aggregations
-- [ ] Create basic trend detection
-- [ ] Handle common unit conversions
-- [ ] Add error handling:
+## Phase 8: Query Processing ✅
+- [x] Implement basic date range parsing
+- [x] Add simple metric aggregations
+- [x] Create basic trend detection
+- [x] Handle common unit conversions
+- [x] Add error handling:
   - Invalid date ranges
   - Missing data
   - Incompatible units

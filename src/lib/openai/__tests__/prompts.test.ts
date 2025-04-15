@@ -1,6 +1,5 @@
 import { testPrompt, CURRENT_PROMPT_VERSION, extractInsights } from '../prompts';
 import { getOpenAIClient } from '../client';
-import { mock } from 'jest-mock-extended';
 import OpenAI from 'openai';
 
 // Mock OpenAI client
@@ -17,19 +16,21 @@ describe('OpenAI Prompts', () => {
             chat: {
                 completions: {
                     create: jest.fn(),
-                } as any,
-            } as any,
-        } as any;
+                } as unknown as OpenAI.Chat.Completions,
+            } as OpenAI.Chat,
+        } as unknown as jest.Mocked<OpenAI>;
 
         (getOpenAIClient as jest.Mock).mockReturnValue(mockOpenAI);
     });
 
     describe('testPrompt', () => {
         it('should test prompts and return results', async () => {
-            const mockResponse = {
+            const mockResponse: OpenAI.Chat.ChatCompletion = {
+                id: 'test',
                 choices: [
                     {
                         message: {
+                            role: 'assistant',
                             content: JSON.stringify({
                                 activity: 'run',
                                 metrics: [
@@ -38,11 +39,16 @@ describe('OpenAI Prompts', () => {
                                 ],
                             }),
                         },
+                        index: 0,
+                        finish_reason: 'stop',
                     },
                 ],
+                created: Date.now(),
+                model: 'gpt-4',
+                object: 'chat.completion',
             };
 
-            mockOpenAI.chat.completions.create.mockResolvedValue(mockResponse as any);
+            mockOpenAI.chat.completions.create.mockResolvedValue(mockResponse);
 
             const testCases = [
                 {
@@ -80,10 +86,12 @@ describe('OpenAI Prompts', () => {
 
     describe('extractInsights', () => {
         it('should extract insights from input', async () => {
-            const mockResponse = {
+            const mockResponse: OpenAI.Chat.ChatCompletion = {
+                id: 'test',
                 choices: [
                     {
                         message: {
+                            role: 'assistant',
                             content: JSON.stringify({
                                 activity: 'run',
                                 metrics: [
@@ -92,11 +100,16 @@ describe('OpenAI Prompts', () => {
                                 ],
                             }),
                         },
+                        index: 0,
+                        finish_reason: 'stop',
                     },
                 ],
+                created: Date.now(),
+                model: 'gpt-4',
+                object: 'chat.completion',
             };
 
-            mockOpenAI.chat.completions.create.mockResolvedValue(mockResponse as any);
+            mockOpenAI.chat.completions.create.mockResolvedValue(mockResponse);
 
             const result = await extractInsights('Ran 5k in 30 min');
 
@@ -105,17 +118,24 @@ describe('OpenAI Prompts', () => {
         });
 
         it('should handle invalid responses', async () => {
-            const mockResponse = {
+            const mockResponse: OpenAI.Chat.ChatCompletion = {
+                id: 'test',
                 choices: [
                     {
                         message: {
+                            role: 'assistant',
                             content: 'invalid json',
                         },
+                        index: 0,
+                        finish_reason: 'stop',
                     },
                 ],
+                created: Date.now(),
+                model: 'gpt-4',
+                object: 'chat.completion',
             };
 
-            mockOpenAI.chat.completions.create.mockResolvedValue(mockResponse as any);
+            mockOpenAI.chat.completions.create.mockResolvedValue(mockResponse);
 
             await expect(extractInsights('Ran 5k in 30 min')).rejects.toThrow();
         });

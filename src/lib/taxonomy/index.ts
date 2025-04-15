@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { InsightResult } from '../openai/prompts';
+import { InsightResult } from '@/types/metrics';
 
 const prisma = new PrismaClient();
 
@@ -24,7 +24,7 @@ interface TaxonomyEntry {
     lastUsed: Date;
 }
 
-interface Taxonomy {
+export interface Taxonomy {
     activities: TaxonomyEntry[];
     metrics: TaxonomyEntry[];
     timestamp: Date;
@@ -34,7 +34,7 @@ export async function updateTaxonomy(insight: InsightResult): Promise<void> {
     const now = new Date();
 
     // Update activity
-    if (insight.activity) {
+    if (insight?.activity) {
         const activityStats = cache.activities.get(insight.activity) || { count: 0, lastUsed: now };
         cache.activities.set(insight.activity, {
             count: activityStats.count + 1,
@@ -43,12 +43,16 @@ export async function updateTaxonomy(insight: InsightResult): Promise<void> {
     }
 
     // Update metrics
-    for (const metric of insight.metrics) {
-        const metricStats = cache.metrics.get(metric.type) || { count: 0, lastUsed: now };
-        cache.metrics.set(metric.type, {
-            count: metricStats.count + 1,
-            lastUsed: now
-        });
+    if (Array.isArray(insight?.metrics)) {
+        for (const metric of insight.metrics) {
+            if (metric?.type) {
+                const metricStats = cache.metrics.get(metric.type) || { count: 0, lastUsed: now };
+                cache.metrics.set(metric.type, {
+                    count: metricStats.count + 1,
+                    lastUsed: now
+                });
+            }
+        }
     }
 
     cache.lastUpdated = now;
@@ -93,7 +97,7 @@ export async function getTaxonomy(): Promise<Taxonomy> {
     for (const entry of entries) {
         try {
             const insight: InsightResult = JSON.parse(entry.insights);
-            if (insight.activity) {
+            if (insight?.activity) {
                 const stats = cache.activities.get(insight.activity) || { count: 0, lastUsed: entry.createdAt };
                 cache.activities.set(insight.activity, {
                     count: stats.count + 1,
@@ -101,12 +105,16 @@ export async function getTaxonomy(): Promise<Taxonomy> {
                 });
             }
 
-            for (const metric of insight.metrics) {
-                const stats = cache.metrics.get(metric.type) || { count: 0, lastUsed: entry.createdAt };
-                cache.metrics.set(metric.type, {
-                    count: stats.count + 1,
-                    lastUsed: stats.lastUsed > entry.createdAt ? stats.lastUsed : entry.createdAt
-                });
+            if (Array.isArray(insight?.metrics)) {
+                for (const metric of insight.metrics) {
+                    if (metric?.type) {
+                        const stats = cache.metrics.get(metric.type) || { count: 0, lastUsed: entry.createdAt };
+                        cache.metrics.set(metric.type, {
+                            count: stats.count + 1,
+                            lastUsed: stats.lastUsed > entry.createdAt ? stats.lastUsed : entry.createdAt
+                        });
+                    }
+                }
             }
         } catch (error) {
             console.error('Failed to parse insights:', error);

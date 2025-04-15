@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
-import { extractInsights, InsightSchema } from '@/lib/openai/prompts';
+import { InsightResult, InsightSchema } from '@/types/metrics';
 import { OpenAIError } from '@/lib/openai/client';
-import { getTaxonomy, updateTaxonomy } from '@/lib/taxonomy';
+import { updateTaxonomy } from '@/lib/taxonomy';
+import { extractInsights } from '@/lib/openai/diary-analysis';
 
 const prisma = new PrismaClient();
 
@@ -68,13 +69,10 @@ export async function POST(request: Request) {
             );
         }
 
-        // Get current taxonomy for context
-        const taxonomy = await getTaxonomy();
-
-        // Extract insights using OpenAI with taxonomy context
+        // Extract insights using OpenAI
         let insights;
         try {
-            insights = await extractInsights(result.data.entry, taxonomy);
+            insights = await extractInsights(result.data.entry);
 
             // Additional validation of insights
             const validationResult = InsightSchema.safeParse(insights);
@@ -90,12 +88,11 @@ export async function POST(request: Request) {
         } catch (error) {
             console.error('Failed to extract insights:', error);
             insights = {
-                error: error instanceof OpenAIError ? error.message : 'Failed to analyze entry',
-                activity: null,
+                summary: error instanceof OpenAIError ? error.message : 'Failed to analyze entry',
                 metrics: [],
-                timestamp: new Date().toISOString(),
-                confidence: 'low'
-            };
+                confidence: 0.3,
+                tags: []
+            } satisfies InsightResult;
         }
 
         // Save to database with insights
