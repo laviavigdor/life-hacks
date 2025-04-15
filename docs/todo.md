@@ -32,6 +32,34 @@
    - Keep interactions simple
    - Make errors actionable
 
+## Git Workflow Guidelines
+1. **Branch Management**
+   - Main branch (`main`) contains only stable, production-ready code
+   - All development work happens in feature branches
+   - Branch naming convention: `feature/phase-{number}-{description}`
+   - Example: `feature/phase-1-project-setup`
+
+2. **Definition of Done**
+   - All automated tests pass
+   - Human validation completed (if required)
+   - Code review completed
+   - Meets all phase requirements
+   - No known bugs or technical debt
+   - Documentation updated
+
+3. **Merge Process**
+   - Create pull request from feature branch to main
+   - All checks must pass
+   - Code review approved
+   - Squash and merge to keep main history clean
+   - Delete feature branch after successful merge
+
+4. **Quality Gates**
+   - No direct commits to main
+   - Pull request required for all changes
+   - All tests must pass before merge
+   - Branch must be up to date with main before merge
+
 ## Common Pitfalls
 1. Don't assume input formats
 2. Don't send sensitive data to LLM
