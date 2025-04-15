@@ -250,30 +250,119 @@ const DiaryEntrySchema = z.object({
 - Error handling strategy for LLM failures
 - Retry mechanism for API calls
 
-## Phase 3: Insight Extraction (In Progress)
+## Phase 3: LLM Integration (In Progress)
+
+### Architecture Diagram
+```mermaid
+graph TD
+    subgraph "Client Layer"
+        Input[DiaryInput Component]
+        State[React State]
+    end
+
+    subgraph "API Layer"
+        Route[/api/diary]
+        Insights[Insight Extraction]
+    end
+
+    subgraph "LLM Layer"
+        Client[OpenAI Client]
+        Prompts[Prompt Management]
+        Testing[Prompt Testing]
+    end
+
+    subgraph "Data Layer"
+        DB[(SQLite)]
+    end
+
+    Input -->|POST| Route
+    Route -->|Raw Entry| DB
+    DB -->|Entry| Insights
+    Insights -->|Text| Client
+    Client -->|JSON| Insights
+    Insights -->|Structured| DB
+    Prompts -->|Templates| Client
+    Testing -->|Validation| Prompts
+    
+    style Input fill:#f9f,stroke:#333
+    style Route fill:#bbf,stroke:#333
+    style Client fill:#bfb,stroke:#333
+    style DB fill:#fbb,stroke:#333
+```
 
 ### Technical Decisions
-- LLM integration for insight extraction
-- Dynamic taxonomy management
-- Metric computation
-- Context awareness
+
+1. **OpenAI Integration**
+   - Context: Need to extract structured insights from natural language entries
+   - Alternatives:
+     - Self-hosted LLM: More control but higher maintenance
+     - Other API providers: Less mature ecosystems
+     - Custom NLP: Too complex for MVP
+   - Decision: Use OpenAI API with GPT-4 Turbo
+   - Consequences:
+     + Reliable and accurate
+     + Easy to integrate
+     + Good documentation
+     - Cost per request
+     - External dependency
+
+2. **Prompt Management**
+   - Context: Need to version and test prompts as they evolve
+   - Alternatives:
+     - Store in database: Too complex for MVP
+     - External CMS: Overkill
+     - Hardcoded constants: Limited flexibility
+   - Decision: TypeScript-based prompt versioning with test suite
+   - Consequences:
+     + Version control integration
+     + Type safety
+     + Easy to test
+     - Manual version management
+     - No runtime updates
+
+3. **Error Handling**
+   - Context: Need robust error handling for API calls
+   - Alternatives:
+     - Basic try/catch: Too simple
+     - Circuit breaker: Overkill for MVP
+     - Custom retry logic: Complex to maintain
+   - Decision: Use OpenAI SDK retry with custom error wrapper
+   - Consequences:
+     + Built-in retries
+     + Consistent error types
+     + Easy to extend
+     - Limited control over retry strategy
 
 ### Dependencies Added
-- OpenAI API integration
-- Custom taxonomy management
-- Metric computation logic
-- Context-aware insights
+- openai: ^4.28.0 (OpenAI Node.js SDK)
+- jest-mock-extended: For testing
 
 ### Known Limitations
-- LLM integration complexity
-- Dynamic taxonomy management challenges
-- Metric computation accuracy
-- Context-aware insights effectiveness
+- In-memory prompt versioning
+- Basic retry mechanism
+- No rate limiting on LLM calls
+- No streaming responses
+- Limited prompt optimization
 
 ### Next Phase Prerequisites
-- Complete API integration before starting Phase 3
-- Ensure LLM training data is available
-- Consider adding loading states for LLM processing
+- Complete prompt testing suite
+- Document prompt iteration workflow
+- Add rate limiting for LLM calls
+- Consider adding response streaming
+
+### Validation Status
+#### Automated Tests
+- ✅ OpenAI client initialization
+- ✅ Error handling coverage
+- ✅ Prompt testing framework
+- ✅ Response parsing
+- ❌ Rate limiting (TODO)
+
+#### Human Validation
+- ❌ Prompt effectiveness (TODO)
+- ❌ Edge case handling (TODO)
+- ❌ Error messages (TODO)
+- ❌ Response quality (TODO)
 
 ## Phase 4: User Interface (In Progress)
 
