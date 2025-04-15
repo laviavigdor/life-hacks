@@ -1,0 +1,7 @@
+-- CreateTable
+CREATE TABLE "diary" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "entry" TEXT NOT NULL,
+    "insights" TEXT NOT NULL DEFAULT '{}',
+    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
