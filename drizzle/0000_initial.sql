@@ -1,0 +1,6 @@
+CREATE TABLE diary (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    entry TEXT NOT NULL,
+    insights TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+); 
