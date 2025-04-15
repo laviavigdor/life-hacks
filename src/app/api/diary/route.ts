@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { extractInsights, InsightSchema } from '@/lib/openai/prompts';
 import { OpenAIError } from '@/lib/openai/client';
+import { getTaxonomy, updateTaxonomy } from '@/lib/taxonomy';
 
 const prisma = new PrismaClient();
 
@@ -67,10 +68,13 @@ export async function POST(request: Request) {
             );
         }
 
-        // Extract insights using OpenAI
+        // Get current taxonomy for context
+        const taxonomy = await getTaxonomy();
+
+        // Extract insights using OpenAI with taxonomy context
         let insights;
         try {
-            insights = await extractInsights(result.data.entry);
+            insights = await extractInsights(result.data.entry, taxonomy);
 
             // Additional validation of insights
             const validationResult = InsightSchema.safeParse(insights);
@@ -80,6 +84,9 @@ export async function POST(request: Request) {
             }
 
             insights = validationResult.data;
+
+            // Update taxonomy with new insights
+            await updateTaxonomy(insights);
         } catch (error) {
             console.error('Failed to extract insights:', error);
             insights = {

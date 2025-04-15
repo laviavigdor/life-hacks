@@ -1,5 +1,6 @@
 import { getOpenAIClient, withErrorHandling } from './client';
 import { z } from 'zod';
+import { Taxonomy, formatTaxonomyContext } from '../taxonomy';
 
 // Validation schemas
 export const MetricSchema = z.object({
@@ -134,14 +135,18 @@ const EXAMPLES = [
     }
 ];
 
-export async function extractInsights(input: string): Promise<InsightResult> {
+export async function extractInsights(input: string, taxonomy?: Taxonomy): Promise<InsightResult> {
     const openai = getOpenAIClient();
+
+    const systemPrompt = taxonomy
+        ? `${SYSTEM_PROMPT}\n\nCurrent taxonomy context:\n${formatTaxonomyContext(taxonomy)}\n\nTry to reuse existing activity and metric names when appropriate.`
+        : SYSTEM_PROMPT;
 
     const response = await withErrorHandling(() =>
         openai.chat.completions.create({
             model: 'gpt-4-turbo-preview',
             messages: [
-                { role: 'system' as const, content: SYSTEM_PROMPT },
+                { role: 'system' as const, content: systemPrompt },
                 ...EXAMPLES.flatMap(ex => [
                     { role: 'user' as const, content: ex.input },
                     { role: 'assistant' as const, content: JSON.stringify(ex.output) }

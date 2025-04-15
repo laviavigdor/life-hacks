@@ -74,11 +74,11 @@ CREATE TABLE diary (
 - [x] Add derived metric calculation
 - [x] Save insights to DB as part of the diary entry
 
-## Phase 5: Dynamic Taxonomy
-- [ ] Implement on-the-fly taxonomy computation
-- [ ] Add sorting by usage and recency
-- [ ] Create context formatter for LLM prompts
-- [ ] Add basic caching for taxonomy computation
+## Phase 5: Dynamic Taxonomy ✅
+- [x] Implement on-the-fly taxonomy computation
+- [x] Add sorting by usage and recency
+- [x] Create context formatter for LLM prompts
+- [x] Add basic caching for taxonomy computation
 
 ## Phase 6: Bottom Input Panel
 - [ ] Create fixed bottom sheet with shadow and rounded top corners
