@@ -1,19 +1,54 @@
 # Life Hacks MVP Todo List
 
-> For development guidelines, principles, and best practices, see [Developer Guidelines](./dev-guidelines.md)
+For developer guidelines, coding standards, and workflow processes, please refer to [Developer Guidelines](./dev-guidelines.md).
+
+-------------
 
 ## Phase 1: Setup ✅
 - [x] Initialize Next.js project with TypeScript
+- [x] Set up SQLite database with simplified schema:
+```sql
+CREATE TABLE diary (
+    id INTEGER PRIMARY KEY,
+    entry TEXT NOT NULL,
+    insights JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 - [x] Add shadcn/ui
-- [x] Set up SQLite database with schema
 - [x] Create single page layout
-- [x] Create test data set
+- [x] Create test data set with variety of entries:
+```json
+[
+  {
+    "entry": "Ran 5k in 30 min",
+    "created_at": "2024-03-20T10:00:00Z"
+  },
+  {
+    "entry": "Did 3 sets of 10 pushups",
+    "created_at": "2024-03-20T15:00:00Z"
+  },
+  {
+    "entry": "Ate 200g of chicken with rice",
+    "created_at": "2024-03-20T19:00:00Z"
+  }
+]
+```
+
+**Automated Tests:**
 - [x] Project build succeeds
-- [x] Dependencies verified
 - [x] Database migrations run
 - [x] Database CRUD operations work
 - [x] Page loads without errors
 - [x] Test data successfully loads
+
+**Human Validation:**
+- [x] UI components are visually consistent
+- [x] Layout is responsive
+- [x] Typography is readable
+- [x] Color scheme is accessible
+
+-------------
 
 ## Phase 2: Api for user input ✅
 - [x] Create api endpoint that receives user input

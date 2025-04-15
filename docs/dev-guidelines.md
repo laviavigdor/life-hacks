@@ -4,7 +4,7 @@
 1. **Simplicity First**
    - Start with the simplest working implementation
    - Add complexity only when necessary
-   - Prefer readable code over clever solutions
+   - Prefer readable code over clever solutions but use minimal code whenever possible
 
 2. **Data Quality**
    - Maintain data consistency
@@ -22,7 +22,7 @@
    - Log with context
 
 5. **Testing**
-   - Write tests first, sanity only
+   - Write tests first, sanity only.
 
 6. **UX Decisions**
    - Give immediate feedback
@@ -30,7 +30,7 @@
    - Keep interactions simple
    - Make errors actionable
 
-## Git Workflow
+## Git Workflow Guidelines
 1. **Branch Management**
    - Main branch (`main`) contains only stable, production-ready code
    - All development work happens in feature branches
@@ -119,6 +119,13 @@ When making changes, ask:
    - Verify build succeeds: `npm run build`
    - Only mark phase as complete when both lint and build pass
 
+## Error Handling Strategy
+- Input Validation Errors: Clear user feedback
+- API Errors: Retry with backoff
+- LLM Errors: Fallback to simple parsing
+- Database Errors: Maintain consistency
+- Calculation Errors: Return partial results with warnings
+
 ## Testing Strategy
 ### Automated Testing (80% coverage)
 - Unit Tests: Core business logic
@@ -133,10 +140,3 @@ When making changes, ask:
 - Content Quality: LLM outputs
 - Edge Cases: Unexpected inputs
 - Accessibility: Real-world usage
-
-## Error Handling Strategy
-- Input Validation Errors: Clear user feedback
-- API Errors: Retry with backoff
-- LLM Errors: Fallback to simple parsing
-- Database Errors: Maintain consistency
-- Calculation Errors: Return partial results with warnings 
