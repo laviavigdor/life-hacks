@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
+import { extractInsights } from '@/lib/openai/prompts';
+import { OpenAIError } from '@/lib/openai/client';
 
 const prisma = new PrismaClient();
 
@@ -65,11 +67,20 @@ export async function POST(request: Request) {
             );
         }
 
-        // Save to database with empty insights
+        // Extract insights using OpenAI
+        let insights;
+        try {
+            insights = await extractInsights(result.data.entry);
+        } catch (error) {
+            console.error('Failed to extract insights:', error);
+            insights = { error: error instanceof OpenAIError ? error.message : 'Failed to analyze entry' };
+        }
+
+        // Save to database with insights
         const entry = await prisma.diary.create({
             data: {
                 entry: result.data.entry,
-                insights: '{}', // Empty insights object as string
+                insights: JSON.stringify(insights),
             },
         });
 
