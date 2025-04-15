@@ -23,6 +23,9 @@ export function DiaryInput() {
 
             if (!response.ok) {
                 const data = await response.json();
+                if (response.status === 429) {
+                    throw new Error('You are sending too many entries too quickly. Please wait a moment and try again.');
+                }
                 throw new Error(data.error || 'Failed to save entry');
             }
 
